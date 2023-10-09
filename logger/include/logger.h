@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
-#include <unistd.h>
 #include <thread>
 #include <mutex>
 #include <cstdint>
