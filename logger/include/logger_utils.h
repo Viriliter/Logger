@@ -265,10 +265,12 @@ namespace logger{
     inline static std::string get_home_dir(){
         #if defined(PLATFORM_WINDOWS)
             char userProfile[MAX_PATH];
-            if(SHGetFolderPathA(nullptr, CSIDL_PROFILE, nullptr, 0, userProfile)!=nullptr)
+            if(SUCCEEDED(SHGetFolderPathA(nullptr, CSIDL_PROFILE, nullptr, 0, userProfile))) {
                 return std::string(userProfile);
-            else
+            }
+            else{
                 return "";
+            }
         #elif defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
             const char* homePath = getenv("HOME");
             if(homePath!=nullptr){
