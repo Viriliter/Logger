@@ -70,15 +70,15 @@ namespace logger{
      * @brief This enum defines log levels
     */
     enum class enumLogLevel{
-        FATAL = 0,
-        ERROR = 1,
-        ALERT = 2,
-        WARNING = 3,
-        INFO = 4,
-        DEBUG = 5,
-        TRACE = 6,
-        LOG_ERROR = 7,
-        INVALID = 8
+        FATAL_ = 0,
+        ERROR_ = 1,
+        ALERT_ = 2,
+        WARNING_ = 3,
+        INFO_ = 4,
+        DEBUG_ = 5,
+        TRACE_ = 6,
+        LOG_ERROR_ = 7,
+        INVALID_ = 8
     };
 
     /**

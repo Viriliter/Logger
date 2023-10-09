@@ -14,13 +14,13 @@
 namespace logger{
 
     // These macros are log functions for users. It eases to use of the class for different level log operations
-    #define LogFatal        *(Logger::getInstance()->set_log_level(enumLogLevel::FATAL,     __FILE__, __LINE__))
-    #define LogError        *(Logger::getInstance()->set_log_level(enumLogLevel::ERROR,     __FILE__, __LINE__))
-    #define LogAlert        *(Logger::getInstance()->set_log_level(enumLogLevel::ALERT,     __FILE__, __LINE__))
-    #define LogWarning      *(Logger::getInstance()->set_log_level(enumLogLevel::WARNING,   __FILE__, __LINE__))
-    #define LogInfo         *(Logger::getInstance()->set_log_level(enumLogLevel::INFO,      __FILE__, __LINE__))
-    #define LogDebug        *(Logger::getInstance()->set_log_level(enumLogLevel::DEBUG,     __FILE__, __LINE__))
-    #define LogTrace        *(Logger::getInstance()->set_log_level(enumLogLevel::TRACE,     __FILE__, __LINE__))
+    #define LogFatal        *(Logger::getInstance()->set_log_level(enumLogLevel::FATAL_,     __FILE__, __LINE__))
+    #define LogError        *(Logger::getInstance()->set_log_level(enumLogLevel::ERROR_,     __FILE__, __LINE__))
+    #define LogAlert        *(Logger::getInstance()->set_log_level(enumLogLevel::ALERT_,     __FILE__, __LINE__))
+    #define LogWarning      *(Logger::getInstance()->set_log_level(enumLogLevel::WARNING_,   __FILE__, __LINE__))
+    #define LogInfo         *(Logger::getInstance()->set_log_level(enumLogLevel::INFO_,      __FILE__, __LINE__))
+    #define LogDebug        *(Logger::getInstance()->set_log_level(enumLogLevel::DEBUG_,     __FILE__, __LINE__))
+    #define LogTrace        *(Logger::getInstance()->set_log_level(enumLogLevel::TRACE_,     __FILE__, __LINE__))
     #define HomeDir         get_home_dir()
     
     /**
@@ -205,7 +205,7 @@ namespace logger{
          * 
          * Additional arguments (file and line) is used for traceback purposes of log message.
          * 
-         * @param[in] level Log level enumeration of message (enumLogLevel::ERROR, enumLogLevel::INFO, etc.). 
+         * @param[in] level Log level enumeration of message (enumLogLevel::ERROR_, enumLogLevel::INFO_, etc.). 
          * @param[in] file File path where the function is called. 
          * @param[in] line Line number where the function is called. 
          * 

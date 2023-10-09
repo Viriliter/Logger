@@ -16,7 +16,7 @@ std::string Logger::config_file_path_ = "";
 std::string Logger::out_file_dir_ = "";
 std::string Logger::out_filename_ = "";
 
-enumLogLevel Logger::current_level_ = enumLogLevel::INFO;
+enumLogLevel Logger::current_level_ = enumLogLevel::INFO_;
 
 bool Logger::is_output_set_ = false;
 bool Logger::is_configure_set_ = false;
@@ -32,15 +32,15 @@ std::string Logger::log_source_file_ = "";
 int Logger::log_source_line_ = 0;
 
 std::map<enumLogLevel, structLogLevel> Logger::mapLogLevel{
-    {enumLogLevel::FATAL, {.desc="FATAL", .color=std::string(COLOR_MAGENTA) }},
-    {enumLogLevel::ERROR, {.desc="ERROR", .color=std::string(COLOR_RED) }},
-    {enumLogLevel::ALERT, {.desc="ALERT", .color=std::string(COLOR_BRIGHT_YELLOW) }},
-    {enumLogLevel::WARNING, {.desc="WARNING", .color=std::string(COLOR_YELLOW) }},
-    {enumLogLevel::INFO, {.desc="INFO", .color=std::string(COLOR_WHITE) }},
-    {enumLogLevel::DEBUG, {.desc="DEBUG", .color=std::string(COLOR_CYAN), .option=SHOW_SOURCE_INFO }},
-    {enumLogLevel::TRACE, {.desc="TRACE", .color=std::string(COLOR_GREEN), .option=SHOW_SOURCE_INFO }},
-    {enumLogLevel::INVALID, {.desc="INVALID", .color=std::string(COLOR_RESET) }},
-    {enumLogLevel::LOG_ERROR, {.desc="LOG ERROR",  .color=std::string(COLOR_BG_RED) }}
+    {enumLogLevel::FATAL_, {"FATAL", std::string(COLOR_MAGENTA) }},
+    {enumLogLevel::ERROR_, {"ERROR", std::string(COLOR_RED) }},
+    {enumLogLevel::ALERT_, {"ALERT", std::string(COLOR_BRIGHT_YELLOW) }},
+    {enumLogLevel::WARNING_, {"WARNING", std::string(COLOR_YELLOW) }},
+    {enumLogLevel::INFO_, {"INFO", std::string(COLOR_WHITE) }},
+    {enumLogLevel::DEBUG_, {"DEBUG", std::string(COLOR_CYAN), SHOW_SOURCE_INFO }},
+    {enumLogLevel::TRACE_, {"TRACE", std::string(COLOR_GREEN), SHOW_SOURCE_INFO }},
+    {enumLogLevel::INVALID_, {"INVALID", std::string(COLOR_RESET) }},
+    {enumLogLevel::LOG_ERROR_, {"LOG ERROR",  std::string(COLOR_BG_RED) }}
 };
 
 /*********************************************************************
@@ -94,7 +94,7 @@ void Logger::error_handler_(const std::string &err_msg){
     std::string timestamp;
     getCurrentTimestamp(timestamp, fmt_);
     
-    set_log_level(enumLogLevel::LOG_ERROR);
+    set_log_level(enumLogLevel::LOG_ERROR_);
 
     if (err_counter_<UINT64_MAX) err_counter_++;
 
@@ -126,7 +126,7 @@ inline std::string Logger::pick_log_color_(enumLogLevel log_level){
             return elem.second.color;
         }
     }
-    return mapLogLevel[enumLogLevel::INVALID].color;
+    return mapLogLevel[enumLogLevel::INVALID_].color;
 }
 
 void Logger::set_output_(const std::string &filename, const std::string file_dir){

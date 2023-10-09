@@ -36,7 +36,7 @@ int main(){
     Logger::set_output("./log_test.txt");
     //LogWarning << HomeDir;
     LogInfo << Logger::get_log_path();
-    *(Logger::getInstance()->set_log_level(enumLogLevel::DEBUG)) << Logger::get_log_path();
+    *(Logger::getInstance()->set_log_level(enumLogLevel::DEBUG_)) << Logger::get_log_path();
     std::string u = "uuuu";
     char g[] = "gnfjd";
     LogError << u;

@@ -104,7 +104,11 @@ namespace logger{
         std::time_t time = std::chrono::system_clock::to_time_t(now);
         auto tm_msec = (std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000).count();
         struct tm timeInfo;
-        localtime_r(&time, &timeInfo);
+        #ifdef PLATFORM_WINDOWS
+            localtime_s(&timeInfo, &time);
+        #else
+            localtime_r(&time, &timeInfo);
+        #endif
         structTimestamp ts = {tm_msec, 
                               timeInfo.tm_sec,
                               timeInfo.tm_min,
@@ -261,7 +265,7 @@ namespace logger{
     inline static std::string get_home_dir(){
         #if defined(PLATFORM_WINDOWS)
             char userProfile[MAX_PATH];
-            if(SHGetFolderPathA(nullptr, CSIDL_PROFILE, nullptr, 0, userProfile)!=nullptr);
+            if(SHGetFolderPathA(nullptr, CSIDL_PROFILE, nullptr, 0, userProfile)!=nullptr)
                 return std::string(userProfile);
             else
                 return "";
