@@ -1,6 +1,5 @@
 # Logger
 Basic logger library.
-
 [![CMake](https://github.com/Viriliter/Logger/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Viriliter/Logger/actions/workflows/cmake-multi-platform.yml)
 
 [![Release](https://img.shields.io/github/release/Viriliter/Logger.svg)](https://github.com/Viriliter/Logger/releases/latest)
