@@ -143,7 +143,7 @@ namespace logger{
      * @return Position of where file extension is started. If no extension is found returns -1.
      *   
     */
-    inline ssize_t get_file_format(const std::string &file_path, std::string &format){
+    inline int get_file_format(const std::string &file_path, std::string &format){
         size_t searchPos = file_path.rfind(".");
         if (searchPos == std::string::npos){
             return -1;
@@ -151,7 +151,7 @@ namespace logger{
         format = file_path;
         
         format = format.substr(searchPos);
-        return searchPos;
+        return (int) searchPos;
     }
 
     /**
