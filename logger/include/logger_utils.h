@@ -96,7 +96,7 @@ namespace logger{
     inline void get_current_timestamp_struct(structTimestamp &ts){
         auto now = std::chrono::system_clock::now();
         std::time_t time = std::chrono::system_clock::to_time_t(now);
-        auto tm_msec = (std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000).count();
+        auto tm_msec = static_cast<long int>((std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000).count());
         struct tm timeInfo;
         #ifdef PLATFORM_WINDOWS
             localtime_s(&timeInfo, &time);
