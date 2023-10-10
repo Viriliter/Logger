@@ -36,12 +36,13 @@ namespace logger{
     private:
         static Logger *ptr_instance_;
         static std::mutex mutex_;
-        static structLogFormat *fmt_;
+        static structLogFormat fmt_;
 
         static std::string config_file_path_;
         static std::string out_file_dir_;
         static std::string out_filename_;
-
+        static std::string root_filename_;
+        
         static enumLogLevel current_level_;
 
         static bool is_output_set_;
@@ -59,6 +60,9 @@ namespace logger{
         static int log_source_line_;
 
         static std::map<enumLogLevel, structLogLevel> mapLogLevel;
+        
+        static bool timestamp_suffix_enabled_;
+        static structTimestamp currentTimestamp_;
 
         /**
          * @brief This private function creates log string that is ready to either write console or file.
@@ -106,14 +110,32 @@ namespace logger{
         static inline std::string pick_log_color_(enumLogLevel log_level);
         
         /**
+         * @brief This private function sets timestamp prefix to the filename.
+         * 
+         * @param[in] ts Timestamp struct
+         * 
+         * @return Prefixed filename 
+         * 
+        */
+        static inline std::string add_timestamp_prefix_(structTimestamp ts);
+
+        /**
          * @brief This private function sets output log file.
          * 
          * @param[in] filename Filename of output log file. No need to define file extension. ".log" is default format.
          * @param[in] file_dir Directory of output log file. Leave empty if home location is desired. 
+         * @param[in] timestamp_prefix_enabled This flag adds timestamp to the filename as prefix.
          * 
         */
-        static void set_output_(const std::string &filename, const std::string file_dir="");
-
+        static void set_output_(const std::string &filename, const std::string file_dir="", bool timestamp_prefix_enabled=false);
+        
+        /**
+         * @brief This private function sets log format.
+         * 
+         * @param[in] fmt Format to be applied.
+         * 
+        */
+        static void set_format_(structLogFormat &fmt);
     protected:
     
         /**
@@ -217,20 +239,25 @@ namespace logger{
         /**
          * @brief This function sets output log file.
          * 
+         * If timestamp_prefix_enabled is set to true, new log entries stored in new log file with corresponding timestamp on solstice.
+         * 
          * @param[in] filename Filename of output log file. No need to define file extension. ".log" is default format.
          * @param[in] file_dir Directory of output log file. Leave empty if home location is desired. 
+         * @param[in] timestamp_prefix_enabled This flag adds timestamp to the filename as prefix.
          * 
         */
-        static void set_output(const std::string &filename, const std::string file_dir="");
+        static void set_output(const std::string &filename, const std::string file_dir="", bool timestamp_prefix_enabled=false);
         
         /**
          * @brief This function sets output log file.
          * 
+         * If timestamp_prefix_enabled is set to true, new log entries stored in new log file with corresponding timestamp on solstice.
+         * 
          * @param[in] filename Filename of output log file. No need to define file extension. ".log" is default format.
          * @param[in] file_dir Directory of output log file. Leave empty if home location is desired. 
-         * 
+         * @param[in] timestamp_prefix_enabled This flag adds timestamp to the filename as prefix.
         */
-        static void set_output(const char *filename, const char *file_dir=nullptr);
+        static void set_output(const char *filename, const char *file_dir=nullptr, bool timestamp_prefix_enabled=false);
         
         /**
          * @brief This function enables color feature of logs in console.
@@ -270,7 +297,9 @@ namespace logger{
          * @brief This function returns setted path of output log file.
          * 
          * If log path has not been set yet, returns empty string. 
-         * 
+         *
+         * @return Path of log file
+         *  
         */
         static std::string get_log_path() noexcept;
     };

@@ -27,13 +27,13 @@ namespace logger{
     /**
      * @brief This function returns timestamp information with provided format
      * 
-     * @param[in] format Format of output timestamp (e.g %Y-%m-%d %H:%M:%S.%f)
      * @param[in] ts Timestamp structure
+     * @param[in] format Format of output timestamp (e.g %Y-%m-%d %H:%M:%S.%f)
      *  
      * @return Output timestamp information 
      *  
     */
-    static std::string format_time(const std::string& format, structTimestamp &ts) {   
+    static std::string format_time(const structTimestamp &ts, const std::string &format) {   
         // Use a stringstream to build the formatted string
         std::ostringstream formattedString;
         size_t pos = 0;
@@ -88,18 +88,12 @@ namespace logger{
     }
     
     /**
-     * @brief This function returns current timetamp information with provided log format.
+     * @brief This function returns current timetamp as struct.
      * 
-     * @param[in] timestamp Current timestamp information
-     * @param[in] fmt Log format structure
+     * @param[in] ts Current timestamp struct
      *  
-    */
-    inline void getCurrentTimestamp(std::string &timestamp, structLogFormat *fmt){
-        char c_timestamp[30];
-        std::string ts_format;
-        if (fmt!=nullptr)  ts_format = fmt->fmt_timestamp;
-        else  ts_format = DEFAULT_TIMESTAMP_FORMAT;
-        
+    */        
+    inline void get_current_timestamp_struct(structTimestamp &ts){
         auto now = std::chrono::system_clock::now();
         std::time_t time = std::chrono::system_clock::to_time_t(now);
         auto tm_msec = (std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000).count();
@@ -109,31 +103,35 @@ namespace logger{
         #else
             localtime_r(&time, &timeInfo);
         #endif
-        structTimestamp ts = {tm_msec, 
-                              timeInfo.tm_sec,
-                              timeInfo.tm_min,
-                              timeInfo.tm_hour,
-                              timeInfo.tm_mday,
-                              timeInfo.tm_mon,
-                              timeInfo.tm_year,
-                              timeInfo.tm_wday,
-                              timeInfo.tm_yday,
-                              timeInfo.tm_isdst};
-
-        timestamp = format_time(ts_format, ts);
+        
+        ts = {tm_msec, 
+              timeInfo.tm_sec,
+              timeInfo.tm_min,
+              timeInfo.tm_hour,
+              timeInfo.tm_mday,
+              timeInfo.tm_mon,
+              timeInfo.tm_year,
+              timeInfo.tm_wday,
+              timeInfo.tm_yday,
+              timeInfo.tm_isdst};
     }
-    
+
     /**
      * @brief This function returns current timetamp information with provided log format.
      * 
      * @param[in] timestamp Current timestamp information
-     * @param[in] fmt Log format structure
+     * @param[in] fmt Timestamp format (e.g "%Y-%m-%d %H:%M:%S.%f")
      *  
-    */        
-    inline void getCurrentTimestamp(char *timestamp, structLogFormat *fmt){
-        std::string temp_timestamp;
-        getCurrentTimestamp(temp_timestamp, fmt);
-        timestamp = const_cast<char*>(temp_timestamp.c_str());
+    */
+    inline void get_current_timestamp(std::string &timestamp, const std::string &fmt){
+        std::string ts_format;
+        if (!fmt.empty())  ts_format = fmt;
+        else  ts_format = DEFAULT_TIMESTAMP_FORMAT;
+        
+        structTimestamp ts;
+        get_current_timestamp_struct(ts);
+        
+        timestamp = format_time(ts, ts_format);
     }
 
     /**
@@ -145,9 +143,11 @@ namespace logger{
      * @return Position of where file extension is started. If no extension is found returns -1.
      *   
     */
-    inline size_t get_file_format(const std::string &file_path, std::string &format){
-        size_t searchPos = file_path.rfind(".", 0);
-        if (searchPos == std::string::npos) return -1;
+    inline ssize_t get_file_format(const std::string &file_path, std::string &format){
+        size_t searchPos = file_path.rfind(".");
+        if (searchPos == std::string::npos){
+            return -1;
+        }
         format = file_path;
         
         format = format.substr(searchPos);
@@ -161,9 +161,9 @@ namespace logger{
      * @param[in] fmt Log format structure. If log format is not defined, uses default delimiter type.
      *
     */
-    static void lstrip_delimiter(std::string &msg, structLogFormat *fmt=nullptr){
+    static void lstrip_delimiter(std::string &msg, structLogFormat &fmt){
         char delimiter;
-        if (fmt!=nullptr) delimiter = (char) fmt->fmt_delimiter_type;
+        if (fmt.fmt_delimiter_type!=enumDelimiterType::DEFAULT) delimiter = (char) fmt.fmt_delimiter_type;
         else delimiter = (char) DEFAULT_DELIMITER_TYPE;
 
         msg.erase(msg.begin(), std::find_if(msg.begin(), msg.end(), [delimiter](char c){
@@ -178,9 +178,9 @@ namespace logger{
      * @param[in] fmt Log format structure If log format is not defined, uses default padding size.
      *
     */
-    static void add_padding(std::string &msg, structLogFormat *fmt=nullptr){
+    static void add_padding(std::string &msg, structLogFormat &fmt){
         size_t padding_size;
-        if (fmt!=nullptr) padding_size = (std::size_t) fmt->fmt_padding_size;
+        if (fmt.fmt_padding_size!=enumPaddingSize::DEFAULT) padding_size = (std::size_t) fmt.fmt_padding_size;
         else padding_size = (std::size_t) DEFAULT_PADDING_SIZE;
         for(int i=0;i<padding_size;i++){
             msg += " ";
@@ -194,9 +194,9 @@ namespace logger{
      * @param[in] fmt Log format structure If log format is not defined, uses default padding size.
      *
     */
-    static void add_delimiter(std::string &msg, structLogFormat *fmt=nullptr){
+    static void add_delimiter(std::string &msg, structLogFormat &fmt){
         char delimiter;
-        if (fmt!=nullptr) delimiter = (char) fmt->fmt_delimiter_type;
+        if (fmt.fmt_delimiter_type!=enumDelimiterType::DEFAULT) delimiter = (char) fmt.fmt_delimiter_type;
         else delimiter = (char) DEFAULT_DELIMITER_TYPE;
 
         msg.push_back(delimiter);
@@ -235,7 +235,7 @@ namespace logger{
      * @param[in] fmt Log format structure
      *
     */
-    static void add_field(const std::string &field, std::string &out, structLogFormat *fmt=nullptr){
+    static void add_field(const std::string &field, std::string &out, structLogFormat &fmt){
         if (field.size()<=0) return;
 
         add_padding(out, fmt);

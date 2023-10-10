@@ -87,6 +87,7 @@ namespace logger{
      * @brief This enum defines delimiter types
     */
     enum class enumDelimiterType: char{
+        DEFAULT,
         TAB = '\t',
         SPACE = ' ',
         COMMA = ',',
@@ -99,6 +100,7 @@ namespace logger{
      * @brief This enum defines padding sizes
     */        
     enum class enumPaddingSize{
+        DEFAULT = -1,
         ZERO = 0,
         ONE = 1,
         TWO = 2,
@@ -114,22 +116,9 @@ namespace logger{
      * @brief This struct defines format of log messages
     */
     struct structLogFormat{
-        std::string fmt_timestamp;              ///< Timestamp format
-        enumDelimiterType fmt_delimiter_type;   ///< Delimiter type
-        enumPaddingSize fmt_padding_size;       ///< Padding size
-    };
-
-    /**
-     * @struct structLogMsg
-     * 
-     * @brief This struct defines the content of log messages
-    */   
-    struct structLogMsg{
-        std::string timestamp;      ///< Timestamp
-        enumLogLevel log_level;     ///< Log Level
-        std::string log_level_desc; ///< Custom Log Level Description
-        std::string source;         ///< Source of Log Message
-        std::string msg;            ///< Message
+        std::string fmt_timestamp = "";                                     ///< Timestamp format
+        enumDelimiterType fmt_delimiter_type = enumDelimiterType::DEFAULT;  ///< Delimiter type
+        enumPaddingSize fmt_padding_size = enumPaddingSize::DEFAULT;        ///< Padding size
     };
 
     /**
@@ -142,18 +131,30 @@ namespace logger{
     */
     struct structTimestamp
     {
-        long int tm_msec;	///< Miliseconds.	[0-1000]
-        int tm_sec;			///< Seconds.	[0-60] (1 leap second)
-        int tm_min;			///< Minutes.	[0-59]
-        int tm_hour;		///< Hours.	[0-23]
-        int tm_mday;		///< Day.		[1-31]
-        int tm_mon;			///< Month.	[0-11]
-        int tm_year;		///< Year	- 1900.
-        int tm_wday;		///< Day of week.	[0-6]
-        int tm_yday;		///< Days in year.[0-365]
-        int tm_isdst;		///< DST.		[-1/0/1]
+        long int tm_msec=0;	///< Miliseconds.	[0-1000]
+        int tm_sec=0;		///< Seconds.	[0-60] (1 leap second)
+        int tm_min=0;		///< Minutes.	[0-59]
+        int tm_hour=0;		///< Hours.	[0-23]
+        int tm_mday=0;		///< Day.		[1-31]
+        int tm_mon=0;		///< Month.	[0-11]
+        int tm_year=0;		///< Year	- 1900.
+        int tm_wday=0;		///< Day of week.	[0-6]
+        int tm_yday=0;		///< Days in year.[0-365]
+        int tm_isdst=0;		///< DST.		[-1/0/1]
     };
 
+    /**
+     * @struct structLogMsg
+     * 
+     * @brief This struct defines the content of log messages
+    */   
+    struct structLogMsg{
+        structTimestamp timestamp;      ///< Timestamp
+        enumLogLevel log_level;     ///< Log Level
+        std::string log_level_desc; ///< Custom Log Level Description
+        std::string source;         ///< Source of Log Message
+        std::string msg;            ///< Message
+    };
 }
 
 #endif  // LOGGER_DEFS_H
