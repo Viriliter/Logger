@@ -121,8 +121,12 @@ void Logger::error_handler_(const std::string &err_msg){
     err_log.timestamp = ts;
     err_log.log_level = current_level_;
     err_log.log_level_desc = "[" + mapLogLevel[current_level_].desc + " " + std::to_string(err_counter_) + "]";
-    
-    err_log.source = ((bool) ((mapLogLevel[current_level_].option & MASK_SHOW_SOURCE_INFO) != 0) && is_source_enabled_)? log_source_file_ + ":" + std::to_string(log_source_line_): "";
+    if ((bool) ((mapLogLevel[current_level_].option & MASK_SHOW_SOURCE_INFO) != 0) && is_source_enabled_){
+        err_log.source = (log_source_file_ != "" && log_source_line_ >= 0)? log_source_file_ + ":" + std::to_string(log_source_line_): "";
+    }
+    else{
+        err_log.source = "";
+    }
     err_log.msg = std::string(err_msg);
     
     std::string out = "";
@@ -221,6 +225,25 @@ void Logger::set_format_(structLogFormat &fmt){
     fmt_.fmt_timestamp = fmt.fmt_timestamp;
 }
 
+void Logger::log_(const std::string &msg_) noexcept {
+    structLogMsg log;
+    structTimestamp ts;
+    get_current_timestamp_struct(ts);
+    
+    log.timestamp = ts;
+    log.log_level = current_level_;
+    if ((bool) ((mapLogLevel[current_level_].option & MASK_SHOW_SOURCE_INFO) != 0) && is_source_enabled_){
+        log.source = (log_source_file_ != "" && log_source_line_ >= 0)? log_source_file_ + ":" + std::to_string(log_source_line_): "";
+    }
+    else{
+        log.source = "";
+    }
+    log.msg = msg_;
+
+    write_console_(log);
+    write_file_(log);
+};
+
 /*********************************************************************
  * 
  * Protected Functions 
@@ -261,65 +284,25 @@ Logger *Logger::getInstance(){
 }
 
 Logger *Logger::operator<<(char *s_){
-    structLogMsg log;
-    structTimestamp ts;
-    get_current_timestamp_struct(ts);
-    
-    log.timestamp = ts;
-    log.log_level = current_level_;
-    log.source = ((bool) ((mapLogLevel[current_level_].option & MASK_SHOW_SOURCE_INFO) != 0) && is_source_enabled_)? log_source_file_ + ":" + std::to_string(log_source_line_): "";
-    log.msg = std::string(s_);
-
-    write_console_(log);
-    write_file_(log);
+    log_(std::string(s_));
 
     return ptr_instance_;
 }
 
 Logger *Logger::operator<<(const std::string &s_){
-    structLogMsg log;
-    structTimestamp ts;
-    get_current_timestamp_struct(ts);
-    
-    log.timestamp = ts;
-    log.log_level = current_level_;
-    log.source = ((bool) ((mapLogLevel[current_level_].option & MASK_SHOW_SOURCE_INFO) != 0) && is_source_enabled_)? log_source_file_ + ":" + std::to_string(log_source_line_): "";
-    log.msg = s_;
-
-    write_console_(log);
-    write_file_(log);
+    log_(s_);
 
     return ptr_instance_;
 }
 
 Logger *Logger::operator<<(std::string &s_){
-    structLogMsg log;
-    structTimestamp ts;
-    get_current_timestamp_struct(ts);
-    
-    log.timestamp = ts;
-    log.log_level = current_level_;
-    log.source = ((bool) ((mapLogLevel[current_level_].option & MASK_SHOW_SOURCE_INFO) != 0) && is_source_enabled_)? log_source_file_ + ":" + std::to_string(log_source_line_): "";
-    log.msg = s_;
-
-    write_console_(log);
-    write_file_(log);
+    log_(s_);
 
     return ptr_instance_;
 }
 
 Logger *Logger::operator<<(const char *s_){
-    structLogMsg log;
-    structTimestamp ts;
-    get_current_timestamp_struct(ts);
-    
-    log.timestamp = ts;
-    log.log_level = current_level_;
-    log.source = ((bool) ((mapLogLevel[current_level_].option & MASK_SHOW_SOURCE_INFO) != 0) && is_source_enabled_)? log_source_file_ + ":" + std::to_string(log_source_line_): "";
-    log.msg = std::string(s_);
-
-    write_console_(log);
-    write_file_(log);
+    log_(std::string(s_));
 
     return ptr_instance_;
 }
@@ -347,8 +330,8 @@ void Logger::configure(char *file_path){
 Logger *Logger::set_log_level(enumLogLevel level, const char *file, int line) noexcept{
     current_level_ = level;
     
-    log_source_file_ = (file==nullptr)? log_source_file_ : std::string(file);
-    log_source_line_ = (line<0)? log_source_line_ : line;
+    log_source_file_ = (file==nullptr)? "" : std::string(file);
+    log_source_line_ = (line<0)? -1 : line;
 
     return ptr_instance_;
 }

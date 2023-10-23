@@ -21,6 +21,15 @@ namespace logger{
     #define LogInfo         *(Logger::getInstance()->set_log_level(enumLogLevel::INFO_,      __FILE__, __LINE__))
     #define LogDebug        *(Logger::getInstance()->set_log_level(enumLogLevel::DEBUG_,     __FILE__, __LINE__))
     #define LogTrace        *(Logger::getInstance()->set_log_level(enumLogLevel::TRACE_,     __FILE__, __LINE__))
+    
+    #define fatal(msg)      *(Logger::getInstance()->set_log_level(enumLogLevel::FATAL_,     __FILE__, __LINE__)) << msg
+    #define error(msg)      *(Logger::getInstance()->set_log_level(enumLogLevel::ERROR_,     __FILE__, __LINE__)) << msg
+    #define alert(msg)      *(Logger::getInstance()->set_log_level(enumLogLevel::ALERT_,     __FILE__, __LINE__)) << msg
+    #define warning(msg)    *(Logger::getInstance()->set_log_level(enumLogLevel::WARNING_,   __FILE__, __LINE__)) << msg
+    #define info(msg)       *(Logger::getInstance()->set_log_level(enumLogLevel::INFO_,      __FILE__, __LINE__)) << msg
+    #define debug(msg)      *(Logger::getInstance()->set_log_level(enumLogLevel::DEBUG_,     __FILE__, __LINE__)) << msg
+    #define trace(msg)      *(Logger::getInstance()->set_log_level(enumLogLevel::TRACE_,     __FILE__, __LINE__)) << msg
+
     #define HomeDir         get_home_dir()
     
     /**
@@ -29,7 +38,7 @@ namespace logger{
      * @brief This class can log the messages into console or files with predefined format.
      * 
      * This class uses Singleton pattern so one instance can be used throught out the application for log operations.
-     * Thread safety mechanism exists, and to enable it by calling set_thread_safety(true).
+     * Thread safety mechanism can be enabled by calling set_thread_safety(true).
      * 
     */
     class Logger{
@@ -136,6 +145,15 @@ namespace logger{
          * 
         */
         static void set_format_(structLogFormat &fmt);
+
+        /**
+         * @brief This private function logs message.
+         * 
+         * @param[in] msg_ Message to be logged
+         * 
+        */
+        static void log_(const std::string &msg_) noexcept;
+
     protected:
     
         /**
